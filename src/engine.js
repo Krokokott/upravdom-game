@@ -11,6 +11,7 @@ function tgInit(){
  if(!inTg)return;
  try{
   TG.ready();TG.expand();
+  if(tgv('8.0')&&TG.isFullscreen&&/^(tdesktop|macos|web|weba|webk|unigram)$/.test(TG.platform))TG.exitFullscreen();
   if(tgv('6.1')){TG.setHeaderColor('#F6F5F4');TG.setBackgroundColor('#F6F5F4')}
   if(tgv('7.10'))TG.setBottomBarColor('#F6F5F4');
   if(tgv('7.7'))TG.disableVerticalSwipes();

@@ -36,7 +36,7 @@
 
 ## Telegram-интеграция (engine.js)
 
-`APP_LINK`, `tgInit()`: ready/expand, цвета шапки и фона, `disableVerticalSwipes`, кнопка «Назад» с подтверждением, вибрация, рекорд в CloudStorage, шаринг через `t.me/share/url`. Из ссылки для шаринга вырезается `#tgWebAppData`. Отступы под системные зоны задаются CSS-переменными `--tg-safe-area-inset-*` и `--tg-content-safe-area-inset-*` в `.app`.
+`APP_LINK`, `tgInit()`: ready/expand, цвета шапки и фона, `disableVerticalSwipes`, кнопка «Назад» с подтверждением, вибрация, рекорд в CloudStorage, шаринг через `t.me/share/url`. Из ссылки для шаринга вырезается `#tgWebAppData`. На десктопных клиентах (`tdesktop`, `macos`, web) игра выходит из Fullscreen: Telegram Desktop при масштабировании Windows неверно отдаёт ширину, и вёрстка уезжает вправо. Отступы под системные зоны задаются CSS-переменными `--tg-safe-area-inset-*` и `--tg-content-safe-area-inset-*` в `.app`.
 
 ## Что сделано и проверено
 
