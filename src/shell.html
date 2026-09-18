@@ -84,6 +84,27 @@ body{margin:0;background:var(--paper);color:var(--ink);font-family:'Onest',Verda
 .stats{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
 .stat{background:var(--gray);border-radius:4px;padding:5px 8px;font-size:13px;font-variant-numeric:tabular-nums}
 .actions{display:grid;gap:8px;margin-top:auto}
+.modes{display:grid;gap:8px}
+.mode{display:flex;flex-direction:column;align-items:flex-start;gap:3px;text-align:left;padding:13px 18px}
+.mode small{font-size:13px;font-weight:400;opacity:.7}
+.rules.compact{grid-template-columns:1fr 1fr;gap:10px 12px}
+.rules.compact li{font-size:13px;grid-template-columns:20px 1fr;gap:8px}
+.rules.compact li svg{width:20px;height:20px}
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.progress{background:var(--ink);color:var(--white);border-radius:12px;padding:14px 16px;display:grid;gap:10px}
+.progress-top{display:flex;justify-content:space-between;align-items:baseline;gap:8px;font-size:13px;color:#B8B1AB;font-variant-numeric:tabular-nums}
+.progress-top b{color:var(--white);font-weight:500;font-size:15px}
+.pair{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.pair .eyebrow{min-height:2.5em}
+#rTitle{font-size:clamp(24px,8vw,34px)}
+.pair-name{font-size:16px;font-weight:500;line-height:1.25;margin-top:4px}
+.bars{display:grid;gap:10px;margin-top:6px;padding-top:14px;border-top:1px solid var(--line)}
+.bar{display:grid;gap:5px;font-size:14px}
+.bar-top{display:flex;justify-content:space-between;gap:8px;font-variant-numeric:tabular-nums}
+.bar-top span{color:var(--muted)}
+.bar .track{background:var(--gray);height:6px}
+.bar .fill{background:var(--ink)}
+.bar.main .fill{background:var(--red)}
 .toast{position:fixed;left:50%;bottom:calc(24px + env(safe-area-inset-bottom));transform:translate(-50%,16px);background:var(--ink);color:var(--white);padding:10px 14px;border-radius:8px;font-size:14px;opacity:0;transition:opacity .3s,transform .3s;max-width:calc(100% - 32px);width:max-content;pointer-events:none;z-index:5}
 .toast.on{opacity:1;transform:translate(-50%,0)}
 @media (prefers-reduced-motion:reduce){*,*::before{animation:none!important;transition:none!important}}
@@ -95,14 +116,22 @@ body{margin:0;background:var(--paper);color:var(--ink);font-family:'Onest',Verda
 <section id="start" class="screen">
   <div class="hero">
     <div class="eyebrow">Ключи через 3 дня</div>
-    <h1 class="h1">Управляющий.<br>Первый год</h1>
-    <p class="lead">Новый дом на 640 квартир, продано 90%. Вы — генеральный директор управляющей компании. Продержитесь 12 месяцев — это 20 решений и примерно 4 минуты.</p>
-    <button class="btn btn-white" id="play" type="button">Принять дом</button>
+    <h1 class="h1">Новый дом<br>на 640 квартир</h1>
+    <p class="lead">Одни будут им управлять, другие — в нём жить. Смахивайте карточки влево или вправо: 20 ситуаций, около 4 минут.</p>
+    <div class="modes">
+      <button class="btn btn-white mode" id="play" type="button">Какой ты управляющий<small>Продержаться первый год</small></button>
+      <button class="btn btn-ink mode" id="playRes" type="button">Какой ты житель<small>Тест по мотивам чата дома</small></button>
+    </div>
   </div>
   <div class="panel">
-    <h2>Держите баланс</h2>
-    <ul class="rules" id="rules"></ul>
-    <p class="hint">Смахните карточку влево или вправо. Пустая или полная шкала — конец игры: даже слишком довольная стройка до добра не доведёт.</p>
+    <h2>Управляющий: держите баланс</h2>
+    <ul class="rules compact" id="rules"></ul>
+    <p class="hint">Пустая или полная шкала — конец игры: даже слишком довольная стройка до добра не доведёт.</p>
+  </div>
+  <div class="panel">
+    <h2>Житель: проиграть нельзя</h2>
+    <p class="style-note">Отвечайте как есть — в конце узнаете, какой вы сосед. Типажей восемь:</p>
+    <div class="chips" id="resChips"></div>
   </div>
   <p class="note" id="best"></p>
   <p class="note">Неофициальный фан-концепт. Персонажи и ситуации вымышлены.</p>
@@ -110,7 +139,11 @@ body{margin:0;background:var(--paper);color:var(--ink);font-family:'Onest',Verda
 
 <section id="game" class="screen" hidden>
   <div class="meters" id="meters"></div>
-  <div class="status"><span id="month"></span><span id="turn"></span></div>
+  <div class="progress" id="progress" hidden>
+    <div class="progress-top"><span>Какой ты житель</span><b id="progN"></b></div>
+    <div class="track"><div class="fill" id="progFill"></div></div>
+  </div>
+  <div class="status" id="status"><span id="month"></span><span id="turn"></span></div>
   <div class="stage" id="stage"></div>
   <div class="choices">
     <button class="btn btn-red choice" id="cl" type="button"></button>
@@ -133,6 +166,27 @@ body{margin:0;background:var(--paper);color:var(--ink);font-family:'Onest',Verda
   <div class="actions">
     <button class="btn btn-ink" id="share" type="button">Поделиться результатом</button>
     <button class="btn btn-gray" id="again" type="button">Ещё раз</button>
+    <button class="btn btn-gray" id="toRes" type="button">А какой вы житель?</button>
+  </div>
+</section>
+
+<section id="rend" class="screen" hidden>
+  <div class="hero">
+    <div class="eyebrow">Какой ты житель · итог</div>
+    <h1 class="h1" id="rTitle"></h1>
+    <p class="lead" id="rText"></p>
+  </div>
+  <div class="result">
+    <div class="pair">
+      <div><div class="eyebrow">Лучше всего ладите с</div><div class="pair-name" id="rGood"></div></div>
+      <div><div class="eyebrow">Осторожно с</div><div class="pair-name" id="rBad"></div></div>
+    </div>
+    <div class="bars" id="rBars"></div>
+  </div>
+  <div class="actions">
+    <button class="btn btn-ink" id="rShare" type="button">Поделиться результатом</button>
+    <button class="btn btn-gray" id="rAgain" type="button">Ещё раз</button>
+    <button class="btn btn-gray" id="toMgr" type="button">Сыграть за управляющего</button>
   </div>
 </section>
 
