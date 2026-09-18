@@ -68,7 +68,14 @@ function renderRules(){
  $('rules').innerHTML=METERS.map(m=>`<li>${m.icon}<div><b>${m.name}</b><span>${m.desc}</span></div></li>`).join('');
 }
 function buildMeters(){
- $('meters').innerHTML=METERS.map(m=>`<div class="meter" id="mt-${m.k}" role="img"><i class="dot" id="dot-${m.k}"></i>${m.icon}<div class="track"><div class="fill" id="fill-${m.k}"></div></div><span class="meter-name">${m.name}</span></div>`).join('');
+ $('meters').innerHTML=METERS.map(m=>`<div class="meter" id="mt-${m.k}" role="img"><i class="dot" id="dot-${m.k}"></i><span class="delta" id="dl-${m.k}" aria-hidden="true"></span>${m.icon}<div class="track"><div class="fill" id="fill-${m.k}"></div></div><span class="meter-name">${m.name}</span></div>`).join('');
+}
+let deltaT=0;
+function flashDeltas(before){
+ clearTimeout(deltaT);
+ METERS.forEach(m=>{const d=S.v[m.k]-before[m.k],el=$('dl-'+m.k);if(!el)return;
+  el.className='delta'+(d?' on '+(d>0?'up':'down'):'');el.textContent=d?(d>0?'+':'−')+Math.abs(d):''});
+ deltaT=setTimeout(()=>METERS.forEach(m=>{const el=$('dl-'+m.k);if(el)el.classList.remove('on')}),1400);
 }
 function renderMeters(){
  METERS.forEach(m=>{const v=S.v[m.k];$('fill-'+m.k).style.width=v+'%';const el=$('mt-'+m.k);el.classList.toggle('warn',v<=20||v>=80);el.setAttribute('aria-label',`${m.name}: ${v} из 100`)});
@@ -130,7 +137,9 @@ function choose(side){
 
 function apply(side){
  const c=S.card, ch=c[side];
+ const before={...S.v};
  for(const k in ch.fx){S.v[k]=Math.max(0,Math.min(100,S.v[k]+ch.fx[k]));if(ch.fx[k]>0)S.fav[k]+=ch.fx[k]}
+ flashDeltas(before);
  if(ch.cake)S.cake++;if(ch.jam)S.jam++;
  if(ch.next&&!S.used.has(ch.next)&&!S.queue.some(q=>q.id===ch.next))S.queue.push({id:ch.next,at:S.turn+2+Math.floor(Math.random()*3)});
  S.used.add(c.id);S.last=c.id;S.turn++;S.card=null;
