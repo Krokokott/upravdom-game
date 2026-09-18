@@ -1,0 +1,451 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#FF001F">
+<script src="https://telegram.org/js/telegram-web-app.js?59"></script>
+<title>Управляющий. Первый год</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Onest:wght@400;500;600&display=swap">
+<style>
+:root{--red:#FF001F;--ink:#292522;--paper:#F6F5F4;--gray:#F2F2F2;--gray-2:#E6E3E0;--line:#E4E1DE;--muted:#7D7670;--white:#FFFFFF}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+html,body{min-height:100%}
+body{margin:0;background:var(--paper);color:var(--ink);font-family:'Onest',Verdana,sans-serif;-webkit-tap-highlight-color:transparent;overscroll-behavior:none}
+.app{max-width:440px;margin:0 auto;min-height:100dvh;padding:16px;display:flex;flex-direction:column}
+.screen{flex:1;display:flex;flex-direction:column;gap:12px}
+.hero{background:var(--red);color:var(--white);border-radius:12px;padding:24px 20px;display:flex;flex-direction:column;gap:14px}
+.eyebrow{font-size:12px;font-weight:500;letter-spacing:.06em;text-transform:uppercase}
+.h1{font-size:34px;line-height:1.05;font-weight:600;letter-spacing:-.02em;margin:0;text-wrap:balance}
+.lead{font-size:15px;line-height:1.45;margin:0;max-width:34em}
+.panel{background:var(--white);border-radius:12px;padding:18px 20px;display:flex;flex-direction:column;gap:14px}
+.panel h2{font-size:17px;font-weight:600;margin:0}
+.rules{display:grid;gap:12px;margin:0;padding:0;list-style:none}
+.rules li{display:grid;grid-template-columns:24px 1fr;gap:12px;align-items:start;font-size:14px;line-height:1.35}
+.rules li svg{width:24px;height:24px}
+.rules b{font-weight:500;display:block}
+.rules span{color:var(--muted)}
+.hint{font-size:13px;line-height:1.45;color:var(--muted);margin:0;padding-top:12px;border-top:1px solid var(--line)}
+.btn{appearance:none;border:0;border-radius:8px;font:inherit;font-size:16px;font-weight:500;padding:15px 18px;cursor:pointer;min-height:52px;color:var(--ink);transition:background-color .15s}
+.btn-white{background:var(--white)}
+.btn-ink{background:var(--ink);color:var(--white)}
+.btn-gray{background:var(--gray)}
+.btn-gray:hover,.btn-gray.hot{background:var(--gray-2)}
+.btn:focus-visible{outline:2px solid var(--ink);outline-offset:2px}
+.hero .btn:focus-visible{outline-color:var(--white)}
+.note{font-size:12px;color:var(--muted);text-align:center;margin:0}
+.meters{background:var(--white);border-radius:12px;padding:14px 14px 12px;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}
+.meter{display:flex;flex-direction:column;align-items:center;gap:6px;position:relative;padding-top:12px}
+.meter svg{width:24px;height:24px;transition:color .3s}
+.dot{position:absolute;top:0;left:50%;width:6px;height:6px;margin-left:-3px;border-radius:50%;background:var(--ink);opacity:0;transition:opacity .15s}
+.dot.big{width:10px;height:10px;margin-left:-5px;top:-2px}
+.dot.on{opacity:1}
+.track{width:100%;height:6px;background:var(--gray);border-radius:3px;overflow:hidden}
+.fill{height:100%;background:var(--ink);border-radius:3px;transition:width .45s ease,background-color .3s}
+.meter.warn .fill{background:var(--red)}
+.meter.warn svg{color:var(--red)}
+.meter-name{font-size:11px;color:var(--muted)}
+.status{display:flex;justify-content:space-between;align-items:baseline;gap:8px;font-size:13px;color:var(--muted);padding:0 4px;font-variant-numeric:tabular-nums}
+.status b{color:var(--ink);font-weight:500}
+.stage{flex:1;display:flex;align-items:center;justify-content:center;position:relative;min-height:330px;padding-top:14px}
+.card{position:relative;width:100%;background:var(--white);border-radius:12px;padding:20px;display:flex;flex-direction:column;gap:16px;min-height:max(310px,min(440px,52dvh));touch-action:none;user-select:none;-webkit-user-select:none;cursor:grab;box-shadow:0 14px 32px -20px rgba(41,37,34,.45);will-change:transform}
+.card:active{cursor:grabbing}
+.card.enter{animation:enter .35s ease both}
+@keyframes enter{from{transform:translateY(18px) scale(.96);opacity:0}}
+.card.fly{transition:transform .3s ease-in,opacity .3s ease-in}
+.card.back{transition:transform .25s ease}
+.tag{align-self:flex-start;background:var(--gray);border-radius:4px;padding:5px 8px;font-size:12px;font-weight:500}
+.who{display:flex;gap:12px;align-items:center}
+.avatar{width:44px;height:44px;border-radius:50%;background:var(--ink);color:var(--white);display:grid;place-items:center;font-weight:600;font-size:17px;flex:none}
+.avatar.res{background:var(--red)}
+.who b{display:block;font-weight:500;font-size:15px;line-height:1.25}
+.who span{font-size:13px;color:var(--muted)}
+.say{font-size:21px;line-height:1.3;font-weight:500;margin:0;text-wrap:pretty;flex:1}
+.lean{position:absolute;left:14px;right:14px;top:-16px;display:flex;pointer-events:none}
+.lean.right{justify-content:flex-end}
+.lean span{background:var(--red);color:var(--white);border-radius:8px;padding:8px 12px;font-size:14px;font-weight:500;line-height:1.25;opacity:0;max-width:80%}
+.choices{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.choice{text-align:left;font-size:14px;line-height:1.25;padding:12px 14px;display:flex;flex-direction:column;justify-content:flex-start;gap:4px}
+.choice small{font-size:11px;color:var(--muted);font-weight:400;letter-spacing:.05em;text-transform:uppercase}
+.choice.r{text-align:right}
+.result{background:var(--white);border-radius:12px;padding:18px 20px;display:flex;flex-direction:column;gap:6px}
+.result .eyebrow{color:var(--red)}
+.style{font-size:26px;font-weight:600;letter-spacing:-.01em;line-height:1.1}
+.style-note{font-size:14px;color:var(--muted);margin:0}
+.stats{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
+.stat{background:var(--gray);border-radius:4px;padding:5px 8px;font-size:13px;font-variant-numeric:tabular-nums}
+.actions{display:grid;gap:8px;margin-top:auto}
+.toast{position:fixed;left:50%;bottom:calc(24px + env(safe-area-inset-bottom));transform:translate(-50%,16px);background:var(--ink);color:var(--white);padding:10px 14px;border-radius:8px;font-size:14px;opacity:0;transition:opacity .3s,transform .3s;max-width:calc(100% - 32px);width:max-content;pointer-events:none;z-index:5}
+.toast.on{opacity:1;transform:translate(-50%,0)}
+@media (prefers-reduced-motion:reduce){*,*::before{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+<main class="app">
+
+<section id="start" class="screen">
+  <div class="hero">
+    <div class="eyebrow">Ключи через 3 дня</div>
+    <h1 class="h1">Управляющий.<br>Первый год</h1>
+    <p class="lead">Новый дом на 640 квартир, продано 90%. Вы — генеральный директор управляющей компании. Продержитесь 12 месяцев.</p>
+    <button class="btn btn-white" id="play" type="button">Принять дом</button>
+  </div>
+  <div class="panel">
+    <h2>Держите баланс</h2>
+    <ul class="rules" id="rules"></ul>
+    <p class="hint">Смахните карточку влево или вправо. Пустая или полная шкала — конец игры: даже слишком довольная стройка до добра не доведёт.</p>
+  </div>
+  <p class="note" id="best"></p>
+  <p class="note">Неофициальный фан-концепт. Персонажи и ситуации вымышлены.</p>
+</section>
+
+<section id="game" class="screen" hidden>
+  <div class="meters" id="meters"></div>
+  <div class="status"><span id="month"></span><span id="turn"></span></div>
+  <div class="stage" id="stage"></div>
+  <div class="choices">
+    <button class="btn btn-gray choice" id="cl" type="button"></button>
+    <button class="btn btn-gray choice r" id="cr" type="button"></button>
+  </div>
+</section>
+
+<section id="end" class="screen" hidden>
+  <div class="hero">
+    <div class="eyebrow" id="endEyebrow"></div>
+    <h1 class="h1" id="endTitle"></h1>
+    <p class="lead" id="endText"></p>
+  </div>
+  <div class="result">
+    <div class="eyebrow">Мой стиль управления</div>
+    <div class="style" id="endStyle"></div>
+    <p class="style-note" id="endStyleNote"></p>
+    <div class="stats" id="endStats"></div>
+  </div>
+  <div class="actions">
+    <button class="btn btn-ink" id="share" type="button">Поделиться результатом</button>
+    <button class="btn btn-gray" id="again" type="button">Ещё раз</button>
+  </div>
+</section>
+
+</main>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+<script>
+const C=(id,tag,who,role,text,L,R,o={})=>({id,tag,who,role,text,L:{t:L[0],fx:L[1],...(L[2]||{})},R:{t:R[0],fx:R[1],...(R[2]||{})},...o});
+const OPENING=['keys','fire','tariff80'];
+const CARDS=[
+C('keys','Ввод в эксплуатацию','Руководитель проекта','застройщик','Разрешение на ввод получено. Ключи выдаём через три дня, а у вас не набраны консьержи и не подписан договор на вывоз мусора.',
+ ['Перенести выдачу на неделю',{b:-15,s:10,p:-5}],['Выдавать ключи как есть',{b:10,s:-10,p:-5}],{fixed:1}),
+C('fire','Акт приёмки','Прораб генподрядчика','корпус 2','Принимайте корпус как есть. Пожарную сигнализацию доделаем потом, честное слово.',
+ ['Не подписывать акт',{b:-15,s:15}],['Подписать',{b:15,s:-10},{next:'fireInspect'}],{fixed:1}),
+C('tariff80','Продажи','Руководитель отдела продаж','застройщик','Мы обещали покупателям тариф 80 ₽. У вас в расчёте 118 ₽. Первое общее собрание через месяц.',
+ ['Показать жителям честный расчёт',{p:-10,m:15,b:-5}],['Выставить 80 ₽ на первый год',{p:10,m:-20,b:5}],{fixed:1}),
+
+C('fireInspect','Проверка МЧС','Инспектор пожарного надзора','плановая проверка','В корпусе 2 не работает пожарная сигнализация. Предписание и штраф управляющей компании.',
+ ['Заплатить и чинить своими силами',{m:-20,s:10}],['Выставить претензию генподрядчику',{b:-15,s:5,m:-5}],{follow:1}),
+C('cleaningFail','Районный паблик','Инициативная группа','чат дома','Лобби не мыли три дня. Фото грязного лифта набрало 5 000 просмотров в районном паблике.',
+ ['Вернуть прежний клининг',{m:-10,p:10}],['Штрафовать подрядчика и терпеть',{m:5,p:-15}],{follow:1}),
+C('konkurs','Юристы','Юрист управляющей компании','правовой отдел','Управа разместила извещение о конкурсе по дому. Решения собрания о выборе УК пока нет.',
+ ['Бросить все силы на кворум',{m:-10,p:5,s:-5}],['Готовить заявку на конкурс',{s:10,m:-5,p:-5}],{follow:1}),
+
+C('snowchat','Чат дома','Инициативная группа','чат дома, 400 сообщений','Снег со двора свалили у детской площадки. Дети катаются с кучи вместе с реагентом.',
+ ['Вывезти снег сегодня',{m:-15,p:15}],['Вывоз по графику в четверг',{m:5,p:-15,s:-5}],{season:['winter']}),
+C('icicles','Обход','Главный инженер','служба эксплуатации','Над входом во второй подъезд сосульки. Альпинисты свободны в понедельник, сегодня — по двойному тарифу.',
+ ['Огородить вход и ждать',{m:5,p:-10,s:-5}],['Вызвать сегодня',{m:-10,s:10}],{season:['winter']}),
+C('cold','Заявка','Жительница, кв. 214','12 этаж','В квартире +17. Гарантийный отдел говорит, что это зона УК, а УК — что застройщика.',
+ ['Отправить инженера сегодня',{p:10,m:-5,b:-5}],['Переслать в гарантийный отдел',{b:5,p:-10}],{season:['winter']}),
+C('reagent','Благоустройство','Бригадир дворников','клининг','Реагент закончился. Можно посыпать песком: дёшево, но жители разнесут его по всему лобби.',
+ ['Сыпать песок',{m:10,p:-10}],['Купить гранитную крошку',{m:-10,p:5,s:5}],{season:['winter']}),
+C('winterfest','Мероприятия','Руководитель по коммуникациям','управляющая компания','Праздник двора в выходные: горка, ярмарка и горячий брусничный морс. Бюджет 300 тысяч.',
+ ['Ограничиться горкой',{m:5,p:-10}],['Устроить праздник',{m:-10,p:15}],{season:['winter']}),
+C('gate','Паркинг','Житель, место 118','паркинг','Ворота паркинга примёрзли. Я опаздываю на работу, а заявка «в работе» уже 40 минут.',
+ ['Поставить охранника открывать вручную',{m:-5,p:10,s:-5}],['Ждать подрядчика по воротам',{p:-10,s:5}],{season:['winter']}),
+
+C('drain','Обход','Главный инженер','служба эксплуатации','Талая вода заливает приямки паркинга. Ливнёвку генподрядчик до ума не довёл.',
+ ['Требовать с генподрядчика',{b:-10,s:10,p:-5}],['Прочистить своими силами',{m:-10,b:5,p:5}],{season:['spring']}),
+C('bikes','Обход','Инженер по пожарной безопасности','служба эксплуатации','Велосипеды и коляски на этажах перекрыли пожарные проходы. С весной их стало вдвое больше.',
+ ['Убрать всё в колясочную',{s:10,p:-10}],['Поставить велопарковку во дворе',{m:-10,p:10}],{season:['spring','summer']}),
+C('lawns','Благоустройство','Ландшафтный архитектор','подрядчик','Газоны после зимы вытоптаны. Рулонный газон — 900 тысяч, посев — 150, но полгода во дворе будет грязь.',
+ ['Посеять семенами',{m:-5,p:-10}],['Уложить рулонный газон',{m:-15,p:10}],{season:['spring']}),
+C('cafe','Коммерция','Кофейня на первом этаже','арендатор','Хотим летнюю веранду во дворе. Готовы платить управляющей компании аренду.',
+ ['Разрешить за аренду',{m:10,p:-10}],['Отказать: двор для жителей',{m:-5,p:5}],{season:['spring','summer']}),
+
+C('ac','Фасад','Архитектор застройщика','проектирование','Жители вешают кондиционеры на фасад где попало. Дом начинает выглядеть как рынок.',
+ ['Выдать предписания на демонтаж',{s:10,p:-15,b:5}],['Согласовать места и корзины',{m:-10,s:5,p:5}],{season:['summer']}),
+C('heat','Заявка','Мама из 3-го подъезда','детская площадка','Покрытие на площадке раскалилось, дети не могут играть. Нужен навес.',
+ ['Поставить навес',{m:-10,p:10,b:-5}],['Ждать решения застройщика',{b:5,p:-10}],{season:['summer']}),
+C('water','Благоустройство','Бригадир озеленителей','подрядчик','Жара третью неделю. Полив по регламенту — раз в три дня, а газон уже желтеет.',
+ ['Поливать каждый день',{m:-10,p:5,s:-5}],['Поливать по регламенту',{s:5,p:-10}],{season:['summer']}),
+
+C('heating','Отопление','Житель, кв. 57','чат дома','На улице +8, в квартирах холодно. Включите отопление раньше городского графика!',
+ ['Запустить отопление раньше',{m:-10,p:10}],['Ждать графика',{m:5,p:-10,s:5}],{season:['autumn']}),
+C('sept1','Мероприятия','Инициативная группа','родительский чат','Первоклассникам нашего дома нужна линейка во дворе 1 сентября. С шариками и звуком.',
+ ['Организовать праздник',{m:-5,p:10}],['Поддержать только уборкой',{p:-5,s:5}],{season:['autumn']}),
+C('leaves','Благоустройство','Бригадир дворников','клининг','Листопад. Одни жители требуют убирать листву каждый день, другие — не трогать её вовсе.',
+ ['Убирать каждый день',{m:-10,p:5}],['Оставить листву на газонах',{m:5,p:-5,s:5}],{season:['autumn']}),
+
+C('robot','Показ квартир','Менеджер отдела продаж','застройщик','Робот-уборщик застрял в лобби посреди показа квартиры и громко просит его освободить.',
+ ['Выкатить робота и извиниться',{b:-5,s:5}],['Сказать, что это часть экскурсии',{b:10,s:-5}]),
+C('jam','Приёмная','Жительница, кв. 14','1 этаж','Принесла вам банку брусничного варенья. И очень прошу перенести мусорные контейнеры от моего окна.',
+ ['Спасибо, но площадка по проекту',{s:10,p:-5}],['Перенести контейнеры',{p:10,s:-10,m:-5},{jam:1}]),
+C('uprava','Управа','Секретарь главы управы','управа района','Глава управы ждёт вас в 9:00. Приёмка второго корпуса в 9:30 на другом конце района.',
+ ['Поехать в управу',{b:-10,s:5,p:5}],['Поехать на приёмку',{b:10,s:-5,p:-5},{msg:'В управе запомнили, кто не пришёл'}]),
+C('lifts','Экономика','Главный инженер','служба эксплуатации','Лифтёр на объекте 95% времени просто перезапускает лифты. Обучим своих инженеров — сэкономим 440 тысяч в месяц.',
+ ['Оставить лифтёра',{m:-5,s:5}],['Обучить своих',{m:15,s:-10}]),
+C('debt','Финансы','Главный бухгалтер','управляющая компания','Дебиторка выросла до 18%. Можно подавать в суд на каждого, кто не платит больше трёх месяцев.',
+ ['Звонить и договариваться',{m:5,s:-5}],['Иски и ограничения',{m:15,p:-15}]),
+C('windows','Гарантия','Житель, кв. 301','чат дома','Окна в спальне дуют. Это третья заявка за месяц, гарантийный отдел молчит.',
+ ['Эскалировать руководителю проекта',{p:10,b:-10}],['Попросить подождать неделю',{b:5,p:-10}]),
+C('leak','Гарантия','Главный инженер','паркинг','В паркинге с потолка капает на машины. Генподрядчик уверяет, что это конденсат.',
+ ['Заказать независимую экспертизу',{m:-10,b:-10,p:15}],['Поставить поддоны и ждать',{p:-15,b:5}]),
+C('oss','Общее собрание','Юрист управляющей компании','правовой отдел','Для кворума не хватает 7% голосов. Заочная часть собрания заканчивается через неделю.',
+ ['Обходить квартиры по вечерам',{m:-5,p:10,s:-5}],['Продлить голосование',{s:-5},{next:'konkurs',msg:'Сроки начинают поджимать'}]),
+C('extra','Доп. услуги','Руководитель клиентского сервиса','управляющая компания','Запускаем платные услуги: уборка квартир, химчистка, мойка колясок. Персонал возьмём из штата дома.',
+ ['Сначала довести базовый сервис',{s:10,m:-5}],['Запустить сейчас',{m:15,s:-10}]),
+C('couriers','Двор без машин','Консьерж','корпус 1','Курьеры гоняют по двору на самокатах. Мамы с колясками в ярости.',
+ ['Калитки и запрет въезда',{p:10,m:-10}],['Зона выдачи заказов у ворот',{p:-5,m:-5,s:10}]),
+C('dogs','Заявка','Жительница, кв. 88','чат дома','Собачники выгуливают псов на газоне прямо у детской площадки. Нужна отдельная площадка.',
+ ['Сделать площадку для собак',{m:-10,p:10,b:-5}],['Таблички и штрафы',{p:-5,s:10}]),
+C('blogger','Соцсети','Житель-блогер','канал «Правда о нашем доме»','У меня 2 000 подписчиков. Хочу интервью с директором УК — в прямом эфире.',
+ ['Прийти на эфир',{p:10,b:-5}],['Отказаться',{p:-10,b:5}]),
+C('salary','Персонал','Управляющий домом','управляющая компания','Уборщицы уходят к соседям: там платят на 10 тысяч больше.',
+ ['Поднять зарплату',{m:-15,s:10}],['Искать новых',{s:-10,p:-5}]),
+C('cheapClean','Закупки','Менеджер по закупкам','управляющая компания','Клининговая компания предлагает цену на 30% ниже текущего подрядчика.',
+ ['Остаться со старыми',{m:-5,s:5}],['Перейти на дешёвых',{m:15,s:-5},{next:'cleaningFail'}]),
+C('masterplan','Проектирование','Архитектор застройщика','новый квартал','Показываем мастер-план нового квартала. Места под снег нет, офис УК — в подвале без окон.',
+ ['Требовать переделать',{b:-10,s:15}],['Согласовать, разберёмся потом',{b:10,s:-10}]),
+C('defects','Осмотры','Инженер по качеству','застройщик','На осмотрах жители нашли 1 200 замечаний. Застройщик просит подписывать акты передачи с оговорками.',
+ ['Только после устранения',{p:10,b:-15}],['Подписывать с оговорками',{b:10,p:-10}]),
+C('dividends','Акционеры','Финансовый директор','головная компания','Акционеры ждут дивиденды за год уже в этом квартале.',
+ ['Отложить до конца года',{b:-10,m:5}],['Выплатить сейчас',{m:-15,b:10}]),
+C('swing','Заявка','Мама из 1-го подъезда','детская площадка','Качели шатаются. Гарантийный отдел обещает приехать через месяц.',
+ ['Закрыть площадку до ремонта',{p:-10,s:10}],['Починить своими силами',{m:-5,p:10,b:-5}]),
+C('noise','Заявка','Жительница, кв. 402','чат дома','Сосед сверлит по воскресеньям с 8 утра. Уже третью неделю.',
+ ['Ужесточить правила проживания',{s:10,p:-5}],['Поговорить с соседом лично',{p:5,s:-5}]),
+C('intercom','Технологии','Житель, кв. 19','приложение домофона','Приложение домофона не пускает гостей. Вы же обещали умный дом!',
+ ['Сменить провайдера',{m:-10,p:10,b:-5}],['Ждать обновления',{p:-10,m:5}]),
+C('ai','Цифровизация','Руководитель диспетчерской','управляющая компания','Предлагаю ИИ-ассистента на входящие звонки. Снимет 40% нагрузки, но первые недели будет путаться.',
+ ['Запустить пилот',{m:5,s:5,p:-10}],['Людям нужен живой диспетчер',{m:-5,p:5}]),
+C('index','Экономика','Финансовый аналитик','управляющая компания','Себестоимость выросла на 12%. Предлагаю проиндексировать тариф.',
+ ['Индексировать',{m:15,p:-15}],['Держать тариф и резать расходы',{m:-10,s:-5,p:5}]),
+C('rumor','Слухи','Консьерж','корпус 1','Жители спрашивают, правда ли, что УК тратит их деньги на свои корпоративы.',
+ ['Опубликовать отчёт по смете',{p:10,m:-5,s:5}],['Не реагировать на слухи',{p:-10}]),
+C('inspection','Проверка','Главный инженер','служба эксплуатации','Жилинспекция через два дня. Журналы обходов пустые, паспорта лифтов не подписаны.',
+ ['Все выходные закрывать хвосты',{s:15,m:-5,p:-5}],['Надеяться на лучшее',{s:-15}]),
+C('openYard','Управа','Глава управы','управа района','Жители района просят открыть ваш двор для прохода к метро.',
+ ['Открыть проход днём',{p:-10,b:10}],['Двор только для своих',{p:10,b:-10}]),
+C('concierge','Жалоба','Жительница, кв. 77','чат дома','Консьерж грубит и не пускает курьеров даже с моим кодом.',
+ ['Уволить консьержа',{p:10,s:-10}],['Провести обучение',{m:-5,s:10,p:-5}]),
+C('cake','Приёмная','Инициативная группа','совет дома','Жители принесли вам торт: месяц без аварий! И сразу хотят обсудить парковку для гостей.',
+ ['Принять торт и выслушать',{p:10,s:-5},{cake:1}],['Вежливо отказаться от торта',{s:5,p:-5}]),
+C('burst','Авария','Диспетчер','ночная смена','3:40 ночи. Прорыв стояка на 17 этаже, течёт до 12-го.',
+ ['Ехать на объект самому',{p:15,m:-5}],['Аварийная служба справится',{p:-10,s:-5,m:5}]),
+C('taxi','Двор без машин','Житель, кв. 145','чат дома','Дайте хотя бы пять мест для такси во дворе. С детьми и чемоданами до ворот далеко.',
+ ['Нет, двор без машин',{s:10,p:-10}],['Сделать карман у въезда',{m:-10,p:10,b:-5}]),
+C('adshoot','Маркетинг','Маркетолог застройщика','новый квартал','Снимаем рекламу во дворе. Нужно освободить детскую площадку от жителей на 4 часа.',
+ ['Отказать',{b:-10,p:5}],['Согласиться',{b:15,p:-15}]),
+C('tours','Продажи','Руководитель отдела продаж','застройщик','Хотим водить покупателей по вашему дому каждый день с 10 до 20.',
+ ['Только два дня в неделю',{b:-5,p:5}],['Водите, пожалуйста',{b:10,p:-10}]),
+C('burnout','Персонал','Управляющий домом','управляющая компания','Команда работает без выходных с самого заселения. Двое уже пишут заявления.',
+ ['Нанять ещё двоих',{m:-15,s:10}],['Премия и потерпеть месяц',{m:-5,s:-10,p:5}]),
+C('warranty','Гарантия','Руководитель гарантийного отдела','застройщик','Предлагаем: мелкие гарантийные работы делаете вы, а мы компенсируем раз в квартал.',
+ ['Согласиться',{b:10,m:-10,p:5}],['Гарантия остаётся за вами',{b:-5,p:-5,s:5}])
+];
+
+(()=>{
+const $=id=>document.getElementById(id);
+const PER=4, GOAL=12, KEY='upr-first-year-best';
+const reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;
+const APP_LINK=''; // ссылка из BotFather вида https://t.me/<бот>/<приложение>
+const TG=window.Telegram&&window.Telegram.WebApp;
+const inTg=!!(TG&&TG.initData);
+const tgv=v=>inTg&&typeof TG.isVersionAtLeast==='function'&&TG.isVersionAtLeast(v);
+const haptic=(type,kind)=>{try{if(tgv('6.1'))type==='impact'?TG.HapticFeedback.impactOccurred(kind):TG.HapticFeedback.notificationOccurred(kind)}catch(e){}};
+function tgInit(){
+ if(!inTg)return;
+ try{
+  TG.ready();TG.expand();
+  if(tgv('6.1')){TG.setHeaderColor('#F6F5F4');TG.setBackgroundColor('#F6F5F4')}
+  if(tgv('7.10'))TG.setBottomBarColor('#F6F5F4');
+  if(tgv('7.7'))TG.disableVerticalSwipes();
+  if(tgv('6.1'))TG.BackButton.onClick(()=>{
+   const leave=()=>{S=null;show('start');showBest()};
+   if($('game').hidden)return leave();
+   tgv('6.2')?TG.showConfirm('Выйти из партии? Прогресс не сохранится.',ok=>{if(ok)leave()}):leave();
+  });
+ }catch(e){}
+}
+const svg=d=>`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${d}</svg>`;
+const METERS=[
+ {k:'m',name:'Прибыль',desc:'бюджет, тариф и дебиторка',icon:svg('<path d="M8 20V4h5.5a4 4 0 0 1 0 8H6M6 16h8"/>')},
+ {k:'p',name:'Жители',desc:'лояльность и чат дома',icon:svg('<circle cx="9" cy="8" r="3.2"/><path d="M3 20c0-3.3 2.7-6 6-6s6 2.7 6 6"/><circle cx="17" cy="9" r="2.4"/><path d="M16.5 14c2.5.2 4.5 2.4 4.5 5"/>')},
+ {k:'s',name:'Стандарты',desc:'регламенты, приёмка, проверки',icon:svg('<rect x="5" y="4.5" width="14" height="16.5" rx="2"/><path d="M9 3h6v3H9zM9 13.5l2 2 4-4"/>')},
+ {k:'b',name:'Стройка',desc:'отношения с застройщиком',icon:svg('<path d="M4 21h9M8 21V4M4 7h16M8 4 4 7M17 7v4M15 11h4v3h-4z"/>')}
+];
+const MONTHS=['Декабрь','Январь','Февраль','Март','Апрель','Май','Июнь','Июль','Август','Сентябрь','Октябрь','Ноябрь'];
+const season=i=>i<=3?'winter':i<=5?'spring':i<=8?'summer':'autumn';
+const ENDINGS={
+ m0:['Касса пуста','Подрядчики выставили претензии, зарплату платить нечем. Акционеры назначили нового директора.'],
+ m1:['Вас переголосовали на ОСС','Прибыль рекордная, но жители посчитали, на чём вы сэкономили, и выбрали другую управляющую компанию.'],
+ p0:['Бунт в чате дома','Инициативная группа собрала подписи и дошла до управы и прокуратуры. Проверки идут третий месяц.'],
+ p1:['Жители испекли вам торт','Вы сказали «да» на каждую просьбу. Торт был вкусный, а смета на следующий год — нет.'],
+ s0:['Предписание жилинспекции','Журналы пустые, паспорта лифтов не подписаны, пожарные проходы заставлены. Лицензия под угрозой.'],
+ s1:['Регламент ради регламента','Любая заявка теперь проходит пять согласований. Сантехник ждёт подписи, пока течёт стояк.'],
+ b0:['Холодная война со стройкой','Гарантийный отдел перестал отвечать на ваши письма. Замечания копятся, а виноватой жители считают УК.'],
+ b1:['Дом ушёл на конкурс','Вы подписывали всё как есть. Жители не простили недоделок, собрание провалилось, и управа объявила конкурс.'],
+ win:['Первый год закрыт','Двенадцать месяцев, и ни одна шкала не сорвалась. Можно принимать вторую очередь.']
+};
+const STYLES={
+ m:['Директор-экономист','Считает каждый рубль сметы'],
+ p:['Директор-дипломат','Сначала жители, потом всё остальное'],
+ s:['Директор-регламент','Живёт по стандарту и требует того же от других'],
+ b:['Директор-переговорщик','Умеет договориться со стройкой'],
+ all:['Директор-канатоходец','Держит все четыре шкалы в равновесии']
+};
+const BY=Object.fromEntries(CARDS.map(c=>[c.id,c]));
+const plural=(n,a,b,c)=>{const t=n%100,u=n%10;return t>10&&t<20?c:u===1?a:u>=2&&u<=4?b:c};
+let S=null, busy=false, toastT=0;
+
+function toast(t){const el=$('toast');el.textContent=t;el.classList.add('on');clearTimeout(toastT);toastT=setTimeout(()=>el.classList.remove('on'),2600)}
+function show(name){['start','game','end'].forEach(s=>$(s).hidden=s!==name);window.scrollTo(0,0);try{if(tgv('6.1'))name==='start'?TG.BackButton.hide():TG.BackButton.show()}catch(e){}}
+let cloudBest=0;
+function readBest(){let b=cloudBest;try{b=Math.max(b,+localStorage.getItem(KEY)||0)}catch(e){}return b}
+function saveBest(n){if(n<=readBest())return;cloudBest=n;try{localStorage.setItem(KEY,n)}catch(e){}try{if(tgv('6.9'))TG.CloudStorage.setItem(KEY,String(n))}catch(e){}}
+function loadCloudBest(){try{if(tgv('6.9'))TG.CloudStorage.getItem(KEY,(err,v)=>{if(!err&&v){cloudBest=Math.max(cloudBest,+v||0);showBest()}})}catch(e){}}
+function showBest(){const b=readBest();$('best').textContent=b?`Ваш рекорд: ${b} ${plural(b,'месяц','месяца','месяцев')} из 12`:''}
+
+function renderRules(){
+ $('rules').innerHTML=METERS.map(m=>`<li>${m.icon}<div><b>${m.name}</b><span>${m.desc}</span></div></li>`).join('');
+}
+function buildMeters(){
+ $('meters').innerHTML=METERS.map(m=>`<div class="meter" id="mt-${m.k}" role="img"><i class="dot" id="dot-${m.k}"></i>${m.icon}<div class="track"><div class="fill" id="fill-${m.k}"></div></div><span class="meter-name">${m.name}</span></div>`).join('');
+}
+function renderMeters(){
+ METERS.forEach(m=>{const v=S.v[m.k];$('fill-'+m.k).style.width=v+'%';const el=$('mt-'+m.k);el.classList.toggle('warn',v<=20||v>=80);el.setAttribute('aria-label',`${m.name}: ${v} из 100`)});
+}
+
+function pick(){
+ if(S.turn<OPENING.length)return BY[OPENING[S.turn]];
+ const qi=S.queue.findIndex(q=>q.at<=S.turn);
+ if(qi>=0)return BY[S.queue.splice(qi,1)[0].id];
+ const se=season(Math.floor(S.turn/PER));
+ const ok=c=>!c.fixed&&!c.follow&&(!c.season||c.season.includes(se));
+ let pool=CARDS.filter(c=>ok(c)&&!S.used.has(c.id));
+ if(!pool.length)pool=CARDS.filter(c=>ok(c)&&c.id!==S.last);
+ const w=pool.map(c=>c.season?3:1), total=w.reduce((a,b)=>a+b,0);
+ let r=Math.random()*total;
+ for(let i=0;i<pool.length;i++){r-=w[i];if(r<0)return pool[i]}
+ return pool[0];
+}
+
+function lean(dx){
+ const c=S&&S.card;if(!c)return;
+ const a=Math.min(1,Math.abs(dx)/90), side=dx<0?'L':'R', le=$('lean');
+ if(le){le.classList.toggle('right',dx<0);$('leanText').textContent=c[side].t;$('leanText').style.opacity=a}
+ METERS.forEach(m=>{const v=c[side].fx[m.k], on=a>.3&&!!v, d=$('dot-'+m.k);d.classList.toggle('on',on);d.classList.toggle('big',on&&Math.abs(v)>10)});
+ $('cl').classList.toggle('hot',dx<-30);$('cr').classList.toggle('hot',dx>30);
+}
+
+function bindDrag(el){
+ let x0=0,dx=0,down=false;
+ el.addEventListener('pointerdown',e=>{if(busy)return;down=true;x0=e.clientX;dx=0;el.classList.remove('back','enter');el.setPointerCapture(e.pointerId)});
+ el.addEventListener('pointermove',e=>{if(!down)return;dx=e.clientX-x0;el.style.transform=`translateX(${dx}px) rotate(${dx/16}deg)`;lean(dx)});
+ const up=()=>{if(!down)return;down=false;if(Math.abs(dx)>90)choose(dx<0?'L':'R');else{el.classList.add('back');el.style.transform='';lean(0)}};
+ el.addEventListener('pointerup',up);el.addEventListener('pointercancel',up);
+}
+
+function renderCard(c){
+ const res=/Жител|Мама|Инициатив/.test(c.who);
+ $('stage').innerHTML=`<article class="card enter" id="card">
+  <div class="lean" id="lean"><span id="leanText"></span></div>
+  <span class="tag">${c.tag}</span>
+  <div class="who"><div class="avatar${res?' res':''}" aria-hidden="true">${c.who[0]}</div><div><b>${c.who}</b><span>${c.role}</span></div></div>
+  <p class="say">${c.text}</p></article>`;
+ bindDrag($('card'));
+ const mi=Math.floor(S.turn/PER);
+ $('month').innerHTML=`<b>${MONTHS[mi%12]}</b> · месяц ${mi+1} из ${GOAL}`;
+ $('turn').textContent=`решение ${S.turn+1}`;
+ $('cl').innerHTML=`<small>← влево</small>${c.L.t}`;
+ $('cr').innerHTML=`<small>вправо →</small>${c.R.t}`;
+}
+
+function next(){S.card=pick();renderCard(S.card)}
+
+function choose(side){
+ if(busy||!S||!S.card)return;busy=true;lean(0);haptic('impact','light');
+ const el=$('card');el.classList.remove('back','enter');el.classList.add('fly');
+ el.style.transform=`translateX(${side==='L'?-140:140}%) rotate(${side==='L'?-24:24}deg)`;el.style.opacity='0';
+ setTimeout(()=>{busy=false;apply(side)},reduce?0:280);
+}
+
+function apply(side){
+ const c=S.card, ch=c[side];
+ for(const k in ch.fx){S.v[k]=Math.max(0,Math.min(100,S.v[k]+ch.fx[k]));if(ch.fx[k]>0)S.fav[k]+=ch.fx[k]}
+ if(ch.cake)S.cake++;if(ch.jam)S.jam++;
+ if(ch.next&&!S.used.has(ch.next)&&!S.queue.some(q=>q.id===ch.next))S.queue.push({id:ch.next,at:S.turn+2+Math.floor(Math.random()*3)});
+ S.used.add(c.id);S.last=c.id;S.turn++;S.card=null;
+ renderMeters();if(ch.msg)toast(ch.msg);
+ const dead=METERS.find(m=>S.v[m.k]<=0||S.v[m.k]>=100);
+ if(dead){busy=true;$('stage').innerHTML='';return setTimeout(()=>{busy=false;end(dead.k+(S.v[dead.k]<=0?'0':'1'))},700)}
+ if(S.turn>=GOAL*PER){busy=true;$('stage').innerHTML='';return setTimeout(()=>{busy=false;end('win')},500)}
+ next();
+}
+
+function styleOf(){
+ const vals=METERS.map(m=>S.fav[m.k]), total=vals.reduce((a,b)=>a+b,0);
+ if(!total)return STYLES.all;
+ const max=Math.max(...vals), min=Math.min(...vals);
+ if((max-min)/total<.12)return STYLES.all;
+ return STYLES[METERS[vals.indexOf(max)].k];
+}
+
+function end(key){
+ const [title,text]=ENDINGS[key], mi=Math.floor((S.turn-1)/PER), n=key==='win'?GOAL:Math.min(GOAL,mi+1);
+ const st=styleOf();
+ S.result={n,title,style:st[0]};
+ $('endEyebrow').textContent=key==='win'?'Итог · 12 месяцев из 12':`Итог · ${MONTHS[mi%12].toLowerCase()}, месяц ${n}`;
+ $('endTitle').textContent=title;$('endText').textContent=text;
+ $('endStyle').textContent=st[0];$('endStyleNote').textContent=st[1];
+ const stats=[`${n} ${plural(n,'месяц','месяца','месяцев')} из 12`,`${S.turn} ${plural(S.turn,'решение','решения','решений')}`];
+ if(S.cake)stats.push(`${S.cake} ${plural(S.cake,'торт','торта','тортов')} от жителей`);
+ if(S.jam)stats.push(`${S.jam} ${plural(S.jam,'банка','банки','банок')} варенья`);
+ $('endStats').innerHTML=stats.map(s=>`<span class="stat">${s}</span>`).join('');
+ saveBest(n);haptic('notify',key==='win'?'success':'error');show('end');
+}
+
+async function share(){
+ if(!S||!S.result)return;
+ const r=S.result, url=APP_LINK||(/^https?:/.test(location.href)?location.href.split('#')[0]:'');
+ const text=`«Управляющий. Первый год»: ${r.n} ${plural(r.n,'месяц','месяца','месяцев')} из 12, мой стиль — ${r.style.toLowerCase()}. Финал: «${r.title}». Сможете дольше?`;
+ if(inTg&&url){try{TG.openTelegramLink('https://t.me/share/url?url='+encodeURIComponent(url)+'&text='+encodeURIComponent(text));return}catch(e){}}
+ try{if(navigator.share){await navigator.share(url?{title:'Управляющий. Первый год',text,url}:{title:'Управляющий. Первый год',text});return}}catch(e){if(e&&e.name==='AbortError')return}
+ try{await navigator.clipboard.writeText(url?`${text} ${url}`:text);toast('Результат скопирован — вставьте в чат')}catch(e){toast(text)}
+}
+
+function start(){
+ S={v:{m:50,p:50,s:50,b:50},fav:{m:0,p:0,s:0,b:0},turn:0,used:new Set(),queue:[],cake:0,jam:0,last:null,card:null,result:null};
+ busy=false;buildMeters();renderMeters();show('game');next();
+}
+
+$('play').addEventListener('click',start);
+$('again').addEventListener('click',start);
+$('share').addEventListener('click',share);
+$('cl').addEventListener('click',()=>choose('L'));
+$('cr').addEventListener('click',()=>choose('R'));
+[['cl',-60],['cr',60]].forEach(([id,dx])=>{
+ $(id).addEventListener('mouseenter',()=>{if(!busy&&S&&S.card){lean(dx);const el=$('card');if(el){el.classList.add('back');el.style.transform=`rotate(${dx/20}deg)`}}});
+ $(id).addEventListener('mouseleave',()=>{if(S&&S.card){lean(0);const el=$('card');if(el)el.style.transform=''}});
+});
+document.addEventListener('keydown',e=>{
+ if($('game').hidden||busy)return;
+ if(e.key==='ArrowLeft'){e.preventDefault();choose('L')}
+ if(e.key==='ArrowRight'){e.preventDefault();choose('R')}
+});
+tgInit();renderRules();showBest();loadCloudBest();
+})();
+
+</script>
+</body>
+</html>

@@ -1,0 +1,139 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#FF001F">
+<script src="https://telegram.org/js/telegram-web-app.js?59"></script>
+<title>Управляющий. Первый год</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Onest:wght@400;500;600&display=swap">
+<style>
+:root{--red:#FF001F;--ink:#292522;--paper:#F6F5F4;--gray:#F2F2F2;--gray-2:#E6E3E0;--line:#E4E1DE;--muted:#7D7670;--white:#FFFFFF}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+html,body{min-height:100%}
+body{margin:0;background:var(--paper);color:var(--ink);font-family:'Onest',Verdana,sans-serif;-webkit-tap-highlight-color:transparent;overscroll-behavior:none}
+.app{max-width:440px;margin:0 auto;min-height:100dvh;padding:16px;display:flex;flex-direction:column}
+.screen{flex:1;display:flex;flex-direction:column;gap:12px}
+.hero{background:var(--red);color:var(--white);border-radius:12px;padding:24px 20px;display:flex;flex-direction:column;gap:14px}
+.eyebrow{font-size:12px;font-weight:500;letter-spacing:.06em;text-transform:uppercase}
+.h1{font-size:34px;line-height:1.05;font-weight:600;letter-spacing:-.02em;margin:0;text-wrap:balance}
+.lead{font-size:15px;line-height:1.45;margin:0;max-width:34em}
+.panel{background:var(--white);border-radius:12px;padding:18px 20px;display:flex;flex-direction:column;gap:14px}
+.panel h2{font-size:17px;font-weight:600;margin:0}
+.rules{display:grid;gap:12px;margin:0;padding:0;list-style:none}
+.rules li{display:grid;grid-template-columns:24px 1fr;gap:12px;align-items:start;font-size:14px;line-height:1.35}
+.rules li svg{width:24px;height:24px}
+.rules b{font-weight:500;display:block}
+.rules span{color:var(--muted)}
+.hint{font-size:13px;line-height:1.45;color:var(--muted);margin:0;padding-top:12px;border-top:1px solid var(--line)}
+.btn{appearance:none;border:0;border-radius:8px;font:inherit;font-size:16px;font-weight:500;padding:15px 18px;cursor:pointer;min-height:52px;color:var(--ink);transition:background-color .15s}
+.btn-white{background:var(--white)}
+.btn-ink{background:var(--ink);color:var(--white)}
+.btn-gray{background:var(--gray)}
+.btn-gray:hover,.btn-gray.hot{background:var(--gray-2)}
+.btn:focus-visible{outline:2px solid var(--ink);outline-offset:2px}
+.hero .btn:focus-visible{outline-color:var(--white)}
+.note{font-size:12px;color:var(--muted);text-align:center;margin:0}
+.meters{background:var(--white);border-radius:12px;padding:14px 14px 12px;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}
+.meter{display:flex;flex-direction:column;align-items:center;gap:6px;position:relative;padding-top:12px}
+.meter svg{width:24px;height:24px;transition:color .3s}
+.dot{position:absolute;top:0;left:50%;width:6px;height:6px;margin-left:-3px;border-radius:50%;background:var(--ink);opacity:0;transition:opacity .15s}
+.dot.big{width:10px;height:10px;margin-left:-5px;top:-2px}
+.dot.on{opacity:1}
+.track{width:100%;height:6px;background:var(--gray);border-radius:3px;overflow:hidden}
+.fill{height:100%;background:var(--ink);border-radius:3px;transition:width .45s ease,background-color .3s}
+.meter.warn .fill{background:var(--red)}
+.meter.warn svg{color:var(--red)}
+.meter-name{font-size:11px;color:var(--muted)}
+.status{display:flex;justify-content:space-between;align-items:baseline;gap:8px;font-size:13px;color:var(--muted);padding:0 4px;font-variant-numeric:tabular-nums}
+.status b{color:var(--ink);font-weight:500}
+.stage{flex:1;display:flex;align-items:center;justify-content:center;position:relative;min-height:330px;padding-top:14px}
+.card{position:relative;width:100%;background:var(--white);border-radius:12px;padding:20px;display:flex;flex-direction:column;gap:16px;min-height:max(310px,min(440px,52dvh));touch-action:none;user-select:none;-webkit-user-select:none;cursor:grab;box-shadow:0 14px 32px -20px rgba(41,37,34,.45);will-change:transform}
+.card:active{cursor:grabbing}
+.card.enter{animation:enter .35s ease both}
+@keyframes enter{from{transform:translateY(18px) scale(.96);opacity:0}}
+.card.fly{transition:transform .3s ease-in,opacity .3s ease-in}
+.card.back{transition:transform .25s ease}
+.tag{align-self:flex-start;background:var(--gray);border-radius:4px;padding:5px 8px;font-size:12px;font-weight:500}
+.who{display:flex;gap:12px;align-items:center}
+.avatar{width:44px;height:44px;border-radius:50%;background:var(--ink);color:var(--white);display:grid;place-items:center;font-weight:600;font-size:17px;flex:none}
+.avatar.res{background:var(--red)}
+.who b{display:block;font-weight:500;font-size:15px;line-height:1.25}
+.who span{font-size:13px;color:var(--muted)}
+.say{font-size:21px;line-height:1.3;font-weight:500;margin:0;text-wrap:pretty;flex:1}
+.lean{position:absolute;left:14px;right:14px;top:-16px;display:flex;pointer-events:none}
+.lean.right{justify-content:flex-end}
+.lean span{background:var(--red);color:var(--white);border-radius:8px;padding:8px 12px;font-size:14px;font-weight:500;line-height:1.25;opacity:0;max-width:80%}
+.choices{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.choice{text-align:left;font-size:14px;line-height:1.25;padding:12px 14px;display:flex;flex-direction:column;justify-content:flex-start;gap:4px}
+.choice small{font-size:11px;color:var(--muted);font-weight:400;letter-spacing:.05em;text-transform:uppercase}
+.choice.r{text-align:right}
+.result{background:var(--white);border-radius:12px;padding:18px 20px;display:flex;flex-direction:column;gap:6px}
+.result .eyebrow{color:var(--red)}
+.style{font-size:26px;font-weight:600;letter-spacing:-.01em;line-height:1.1}
+.style-note{font-size:14px;color:var(--muted);margin:0}
+.stats{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
+.stat{background:var(--gray);border-radius:4px;padding:5px 8px;font-size:13px;font-variant-numeric:tabular-nums}
+.actions{display:grid;gap:8px;margin-top:auto}
+.toast{position:fixed;left:50%;bottom:calc(24px + env(safe-area-inset-bottom));transform:translate(-50%,16px);background:var(--ink);color:var(--white);padding:10px 14px;border-radius:8px;font-size:14px;opacity:0;transition:opacity .3s,transform .3s;max-width:calc(100% - 32px);width:max-content;pointer-events:none;z-index:5}
+.toast.on{opacity:1;transform:translate(-50%,0)}
+@media (prefers-reduced-motion:reduce){*,*::before{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+<main class="app">
+
+<section id="start" class="screen">
+  <div class="hero">
+    <div class="eyebrow">Ключи через 3 дня</div>
+    <h1 class="h1">Управляющий.<br>Первый год</h1>
+    <p class="lead">Новый дом на 640 квартир, продано 90%. Вы — генеральный директор управляющей компании. Продержитесь 12 месяцев.</p>
+    <button class="btn btn-white" id="play" type="button">Принять дом</button>
+  </div>
+  <div class="panel">
+    <h2>Держите баланс</h2>
+    <ul class="rules" id="rules"></ul>
+    <p class="hint">Смахните карточку влево или вправо. Пустая или полная шкала — конец игры: даже слишком довольная стройка до добра не доведёт.</p>
+  </div>
+  <p class="note" id="best"></p>
+  <p class="note">Неофициальный фан-концепт. Персонажи и ситуации вымышлены.</p>
+</section>
+
+<section id="game" class="screen" hidden>
+  <div class="meters" id="meters"></div>
+  <div class="status"><span id="month"></span><span id="turn"></span></div>
+  <div class="stage" id="stage"></div>
+  <div class="choices">
+    <button class="btn btn-gray choice" id="cl" type="button"></button>
+    <button class="btn btn-gray choice r" id="cr" type="button"></button>
+  </div>
+</section>
+
+<section id="end" class="screen" hidden>
+  <div class="hero">
+    <div class="eyebrow" id="endEyebrow"></div>
+    <h1 class="h1" id="endTitle"></h1>
+    <p class="lead" id="endText"></p>
+  </div>
+  <div class="result">
+    <div class="eyebrow">Мой стиль управления</div>
+    <div class="style" id="endStyle"></div>
+    <p class="style-note" id="endStyleNote"></p>
+    <div class="stats" id="endStats"></div>
+  </div>
+  <div class="actions">
+    <button class="btn btn-ink" id="share" type="button">Поделиться результатом</button>
+    <button class="btn btn-gray" id="again" type="button">Ещё раз</button>
+  </div>
+</section>
+
+</main>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+<script>
+/*SCRIPT*/
+</script>
+</body>
+</html>
