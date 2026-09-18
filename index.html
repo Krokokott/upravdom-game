@@ -92,7 +92,7 @@ body{margin:0;background:var(--paper);color:var(--ink);font-family:'Onest',Verda
   <div class="hero">
     <div class="eyebrow">Ключи через 3 дня</div>
     <h1 class="h1">Управляющий.<br>Первый год</h1>
-    <p class="lead">Новый дом на 640 квартир, продано 90%. Вы — генеральный директор управляющей компании. Продержитесь 12 месяцев.</p>
+    <p class="lead">Новый дом на 640 квартир, продано 90%. Вы — генеральный директор управляющей компании. Продержитесь 12 месяцев — это 20 решений и примерно 4 минуты.</p>
     <button class="btn btn-white" id="play" type="button">Принять дом</button>
   </div>
   <div class="panel">
@@ -374,7 +374,7 @@ C('secondPhase','Стройка','Руководитель проекта','за
 
 (()=>{
 const $=id=>document.getElementById(id);
-const PER=1, GOAL=12, KEY='upr-first-year-best';
+const TURNS=20, GOAL=12, KEY='upr-first-year-best';
 const reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;
 const APP_LINK='https://t.me/Brus_home_bot?startapp'; // ссылка из BotFather вида https://t.me/<бот>/<приложение>
 const TG=window.Telegram&&window.Telegram.WebApp;
@@ -403,6 +403,7 @@ const METERS=[
  {k:'b',name:'Стройка',desc:'отношения с застройщиком',icon:svg('<path d="M4 21h9M8 21V4M4 7h16M8 4 4 7M17 7v4M15 11h4v3h-4z"/>')}
 ];
 const MONTHS=['Декабрь','Январь','Февраль','Март','Апрель','Май','Июнь','Июль','Август','Сентябрь','Октябрь','Ноябрь'];
+const monthOf=t=>Math.min(GOAL-1,Math.floor(t*GOAL/TURNS));
 const season=i=>i<=3?'winter':i<=5?'spring':i<=8?'summer':'autumn';
 const ENDINGS={
  m0:['Касса пуста','Подрядчики выставили претензии, зарплату платить нечем. Акционеры назначили нового директора.'],
@@ -450,7 +451,7 @@ function pick(){
  if(S.turn<OPENING.length)return BY[OPENING[S.turn]];
  const qi=S.queue.findIndex(q=>q.at<=S.turn);
  if(qi>=0)return BY[S.queue.splice(qi,1)[0].id];
- const se=season(Math.floor(S.turn/PER));
+ const se=season(monthOf(S.turn));
  const ok=c=>!c.fixed&&!c.follow&&(!c.season||c.season.includes(se));
  let pool=CARDS.filter(c=>ok(c)&&!S.used.has(c.id));
  if(!pool.length)pool=CARDS.filter(c=>ok(c)&&c.id!==S.last);
@@ -484,9 +485,9 @@ function renderCard(c){
   <div class="who"><div class="avatar${res?' res':''}" aria-hidden="true">${c.who[0]}</div><div><b>${c.who}</b><span>${c.role}</span></div></div>
   <p class="say">${c.text}</p></article>`;
  bindDrag($('card'));
- const mi=Math.floor(S.turn/PER);
+ const mi=monthOf(S.turn);
  $('month').innerHTML=`<b>${MONTHS[mi%12]}</b> · месяц ${mi+1} из ${GOAL}`;
- $('turn').textContent=`решение ${S.turn+1}`;
+ $('turn').textContent=`решение ${S.turn+1} из ${TURNS}`;
  $('cl').innerHTML=`<small>← влево</small>${c.L.t}`;
  $('cr').innerHTML=`<small>вправо →</small>${c.R.t}`;
 }
@@ -509,7 +510,7 @@ function apply(side){
  renderMeters();if(ch.msg)toast(ch.msg);
  const dead=METERS.find(m=>S.v[m.k]<=0||S.v[m.k]>=100);
  if(dead){busy=true;$('stage').innerHTML='';return setTimeout(()=>{busy=false;end(dead.k+(S.v[dead.k]<=0?'0':'1'))},700)}
- if(S.turn>=GOAL*PER){busy=true;$('stage').innerHTML='';return setTimeout(()=>{busy=false;end('win')},500)}
+ if(S.turn>=TURNS){busy=true;$('stage').innerHTML='';return setTimeout(()=>{busy=false;end('win')},500)}
  next();
 }
 
@@ -522,7 +523,7 @@ function styleOf(){
 }
 
 function end(key){
- const [title,text]=ENDINGS[key], mi=Math.floor((S.turn-1)/PER), n=key==='win'?GOAL:Math.min(GOAL,mi+1);
+ const [title,text]=ENDINGS[key], mi=monthOf(S.turn-1), n=key==='win'?GOAL:Math.min(GOAL,mi+1);
  const st=styleOf();
  S.result={n,title,style:st[0]};
  $('endEyebrow').textContent=key==='win'?'Итог · 12 месяцев из 12':`Итог · ${MONTHS[mi%12].toLowerCase()}, месяц ${n}`;
