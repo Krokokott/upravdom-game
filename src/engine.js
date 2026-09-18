@@ -191,5 +191,23 @@ document.addEventListener('keydown',e=>{
  if(e.key==='ArrowLeft'){e.preventDefault();choose('L')}
  if(e.key==='ArrowRight'){e.preventDefault();choose('R')}
 });
-tgInit();renderRules();showBest();loadCloudBest();
+function debugPanel(){
+ const sp=inTg&&TG.initDataUnsafe&&TG.initDataUnsafe.start_param;
+ if(sp!=='debug'&&!/debug/.test(location.hash))return;
+ const el=document.createElement('pre');
+ el.style.cssText='position:fixed;left:8px;top:8px;z-index:99;margin:0;padding:8px 10px;background:#292522;color:#fff;font:12px/1.4 monospace;border-radius:6px;max-width:90vw;white-space:pre-wrap;pointer-events:none';
+ document.body.appendChild(el);
+ const upd=()=>{const vv=window.visualViewport,app=document.querySelector('.app').getBoundingClientRect();
+  el.textContent=[
+   'platform: '+(inTg?TG.platform:'browser')+'  v'+(inTg?TG.version:'-'),
+   'fullscreen: '+(inTg?TG.isFullscreen:'-')+'  expanded: '+(inTg?TG.isExpanded:'-'),
+   'inner: '+innerWidth+'x'+innerHeight+'  client: '+document.documentElement.clientWidth,
+   'visual: '+(vv?Math.round(vv.width)+'x'+Math.round(vv.height)+' scale '+vv.scale:'-'),
+   'dpr: '+devicePixelRatio+'  screen: '+screen.width+'x'+screen.height,
+   'tg viewport: '+(inTg?TG.viewportHeight+' / '+TG.viewportStableHeight:'-'),
+   'app: left '+Math.round(app.left)+' width '+Math.round(app.width)
+  ].join('\n')};
+ upd();addEventListener('resize',upd);if(inTg)try{TG.onEvent('fullscreenChanged',upd);TG.onEvent('viewportChanged',upd)}catch(e){}
+}
+tgInit();renderRules();showBest();loadCloudBest();debugPanel();
 })();
