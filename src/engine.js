@@ -1,6 +1,6 @@
 (()=>{
 const $=id=>document.getElementById(id);
-const PER=4, GOAL=12, KEY='upr-first-year-best';
+const PER=1, GOAL=12, KEY='upr-first-year-best';
 const reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;
 const APP_LINK='https://t.me/Brus_home_bot?startapp'; // ссылка из BotFather вида https://t.me/<бот>/<приложение>
 const TG=window.Telegram&&window.Telegram.WebApp;
