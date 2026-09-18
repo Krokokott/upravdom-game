@@ -34,20 +34,22 @@ body{margin:0;background:var(--paper);color:var(--ink);font-family:'Onest',Verda
 .btn-ink{background:var(--ink);color:var(--white)}
 .btn-gray{background:var(--gray)}
 .btn-gray:hover,.btn-gray.hot{background:var(--gray-2)}
+.btn-red{background:var(--red);color:var(--white)}
+.btn-red:hover,.btn-red.hot{background:#D6001A}
 .btn:focus-visible{outline:2px solid var(--ink);outline-offset:2px}
 .hero .btn:focus-visible{outline-color:var(--white)}
 .note{font-size:12px;color:var(--muted);text-align:center;margin:0}
-.meters{background:var(--white);border-radius:12px;padding:14px 14px 12px;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}
+.meters{background:var(--ink);color:var(--white);border-radius:12px;padding:14px 14px 12px;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}
 .meter{display:flex;flex-direction:column;align-items:center;gap:6px;position:relative;padding-top:12px}
 .meter svg{width:24px;height:24px;transition:color .3s}
-.dot{position:absolute;top:0;left:50%;width:6px;height:6px;margin-left:-3px;border-radius:50%;background:var(--ink);opacity:0;transition:opacity .15s}
+.dot{position:absolute;top:0;left:50%;width:6px;height:6px;margin-left:-3px;border-radius:50%;background:var(--white);opacity:0;transition:opacity .15s}
 .dot.big{width:10px;height:10px;margin-left:-5px;top:-2px}
 .dot.on{opacity:1}
-.track{width:100%;height:6px;background:var(--gray);border-radius:3px;overflow:hidden}
-.fill{height:100%;background:var(--ink);border-radius:3px;transition:width .45s ease,background-color .3s}
+.track{width:100%;height:6px;background:rgba(255,255,255,.18);border-radius:3px;overflow:hidden}
+.fill{height:100%;background:var(--white);border-radius:3px;transition:width .45s ease,background-color .3s}
 .meter.warn .fill{background:var(--red)}
 .meter.warn svg{color:var(--red)}
-.meter-name{font-size:11px;color:var(--muted)}
+.meter-name{font-size:11px;color:#B8B1AB}
 .status{display:flex;justify-content:space-between;align-items:baseline;gap:8px;font-size:13px;color:var(--muted);padding:0 4px;font-variant-numeric:tabular-nums}
 .status b{color:var(--ink);font-weight:500}
 .stage{flex:1;display:flex;align-items:center;justify-content:center;position:relative;min-height:330px;padding-top:14px}
@@ -69,7 +71,7 @@ body{margin:0;background:var(--paper);color:var(--ink);font-family:'Onest',Verda
 .lean span{background:var(--red);color:var(--white);border-radius:8px;padding:8px 12px;font-size:14px;font-weight:500;line-height:1.25;opacity:0;max-width:80%}
 .choices{display:grid;grid-template-columns:1fr 1fr;gap:8px}
 .choice{text-align:left;font-size:14px;line-height:1.25;padding:12px 14px;display:flex;flex-direction:column;justify-content:flex-start;gap:4px}
-.choice small{font-size:11px;color:var(--muted);font-weight:400;letter-spacing:.05em;text-transform:uppercase}
+.choice small{font-size:11px;color:rgba(255,255,255,.78);font-weight:400;letter-spacing:.05em;text-transform:uppercase}
 .choice.r{text-align:right}
 .result{background:var(--white);border-radius:12px;padding:18px 20px;display:flex;flex-direction:column;gap:6px}
 .result .eyebrow{color:var(--red)}
@@ -107,8 +109,8 @@ body{margin:0;background:var(--paper);color:var(--ink);font-family:'Onest',Verda
   <div class="status"><span id="month"></span><span id="turn"></span></div>
   <div class="stage" id="stage"></div>
   <div class="choices">
-    <button class="btn btn-gray choice" id="cl" type="button"></button>
-    <button class="btn btn-gray choice r" id="cr" type="button"></button>
+    <button class="btn btn-red choice" id="cl" type="button"></button>
+    <button class="btn btn-red choice r" id="cr" type="button"></button>
   </div>
 </section>
 
