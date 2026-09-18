@@ -58,6 +58,8 @@ let cloudBest=0;
 function readBest(){let b=cloudBest;try{b=Math.max(b,+localStorage.getItem(KEY)||0)}catch(e){}return b}
 function saveBest(n){if(n<=readBest())return;cloudBest=n;try{localStorage.setItem(KEY,n)}catch(e){}try{if(tgv('6.9'))TG.CloudStorage.setItem(KEY,String(n))}catch(e){}}
 function loadCloudBest(){try{if(tgv('6.9'))TG.CloudStorage.getItem(KEY,(err,v)=>{if(!err&&v){cloudBest=Math.max(cloudBest,+v||0);showBest()}})}catch(e){}}
+function loadRecent(){try{return JSON.parse(localStorage.getItem(KEY+'-recent')||'[]')}catch(e){return []}}
+function saveRecent(ids){try{localStorage.setItem(KEY+'-recent',JSON.stringify(ids))}catch(e){}}
 function showBest(){const b=readBest();$('best').textContent=b?`Ваш рекорд: ${b} ${plural(b,'месяц','месяца','месяцев')} из 12`:''}
 
 function renderRules(){
@@ -78,7 +80,7 @@ function pick(){
  const ok=c=>!c.fixed&&!c.follow&&(!c.season||c.season.includes(se));
  let pool=CARDS.filter(c=>ok(c)&&!S.used.has(c.id));
  if(!pool.length)pool=CARDS.filter(c=>ok(c)&&c.id!==S.last);
- const w=pool.map(c=>c.season?3:1), total=w.reduce((a,b)=>a+b,0);
+ const w=pool.map(c=>(c.season?3:1)*(S.recent.has(c.id)?.3:1)), total=w.reduce((a,b)=>a+b,0);
  let r=Math.random()*total;
  for(let i=0;i<pool.length;i++){r-=w[i];if(r<0)return pool[i]}
  return pool[0];
@@ -156,7 +158,7 @@ function end(key){
  if(S.cake)stats.push(`${S.cake} ${plural(S.cake,'торт','торта','тортов')} от жителей`);
  if(S.jam)stats.push(`${S.jam} ${plural(S.jam,'банка','банки','банок')} варенья`);
  $('endStats').innerHTML=stats.map(s=>`<span class="stat">${s}</span>`).join('');
- saveBest(n);haptic('notify',key==='win'?'success':'error');show('end');
+ saveRecent([...S.used]);saveBest(n);haptic('notify',key==='win'?'success':'error');show('end');
 }
 
 async function share(){
@@ -169,7 +171,7 @@ async function share(){
 }
 
 function start(){
- S={v:{m:50,p:50,s:50,b:50},fav:{m:0,p:0,s:0,b:0},turn:0,used:new Set(),queue:[],cake:0,jam:0,last:null,card:null,result:null};
+ S={v:{m:50,p:50,s:50,b:50},fav:{m:0,p:0,s:0,b:0},turn:0,used:new Set(),queue:[],cake:0,jam:0,last:null,card:null,result:null,recent:new Set(loadRecent())};
  busy=false;buildMeters();renderMeters();show('game');next();
 }
 
